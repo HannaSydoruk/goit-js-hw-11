@@ -3,7 +3,6 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { searchImages } from "./pixabay-api";
 
-
 const PER_PAGE = 40;
 const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
@@ -15,7 +14,7 @@ let maxPages = 1;
 searchFormEl.addEventListener('submit', onSubmit);
 loadMoreEl.addEventListener('click', onLoadMore);
 
-let lightbox = new SimpleLightbox('.gallery > div > a', { /* options */ });
+let lightbox = new SimpleLightbox('.gallery > div > a', {});
 
 async function onSubmit(e) {
     e.preventDefault();
@@ -26,6 +25,7 @@ async function onSubmit(e) {
     if (!queryTerm) {
         return;
     }
+
     hideEl(loadMoreEl);
     const res = await searchImages(queryTerm, page, PER_PAGE);
     maxPages = Math.ceil(res.totalHits / PER_PAGE);
@@ -37,12 +37,12 @@ async function onSubmit(e) {
         lightbox.refresh();
     }
     else {
-        Notify.info('Sorry, there are no images matching your search query. Please try again.')
+        Notify.failure('Sorry, there are no images matching your search query. Please try again.')
     }
 
     if (maxPages === page) {
         hideEl(loadMoreEl);
-        Notify.info("We're sorry, but you've reached the end of search results.")
+        Notify.warning("We're sorry, but you've reached the end of search results.")
     }
 };
 
@@ -83,6 +83,10 @@ async function onLoadMore() {
     galleryEl.insertAdjacentHTML("beforeend", createMarkup(res.hits));
     lightbox.refresh();
 
+    scrollToNext();
+}
+
+function scrollToNext() {
     const { height: cardHeight } = galleryEl
         .firstElementChild.getBoundingClientRect();
 
