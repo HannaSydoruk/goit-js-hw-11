@@ -52,7 +52,7 @@ function onSubmit(e) {
 function createMarkup(arrayOfImages) {
     return arrayOfImages.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
         return `<div class="photo-card">
-                <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+                <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" height="300px" loading="lazy" /></a>
                 <div class="info">
                     <p class="info-item">
                     <b>Likes: ${likes}</b>
@@ -86,6 +86,14 @@ function onLoadMore() {
             };
             galleryEl.insertAdjacentHTML("beforeend", createMarkup(res.hits));
             lightbox.refresh();
+
+            const { height: cardHeight } = galleryEl
+                .firstElementChild.getBoundingClientRect();
+
+            window.scrollBy({
+                top: cardHeight * 2,
+                behavior: "smooth",
+            });
         })
 }
 
