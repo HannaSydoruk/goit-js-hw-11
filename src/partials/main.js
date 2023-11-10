@@ -1,4 +1,7 @@
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import { searchImages } from "./pixabay-api";
+
 
 const PER_PAGE = 3;
 const searchFormEl = document.querySelector('#search-form');
@@ -10,6 +13,8 @@ let maxPages = 1;
 
 searchFormEl.addEventListener('submit', onSubmit);
 loadMoreEl.addEventListener('click', onLoadMore);
+
+let lightbox = new SimpleLightbox('.gallery > div > a', { /* options */ });
 
 function onSubmit(e) {
     e.preventDefault();
@@ -25,6 +30,8 @@ function onSubmit(e) {
             if (res.hits.length) {
                 galleryEl.innerHTML = createMarkup(res.hits);
                 showEl(loadMoreEl);
+
+                lightbox.refresh();
             }
             else {
                 alert('Sorry, there are no images matching your search query. Please try again.')
@@ -38,9 +45,9 @@ function onSubmit(e) {
 };
 
 function createMarkup(arrayOfImages) {
-    return arrayOfImages.map(({ webformatURL, tags, likes, views, comments, downloads }) => {
+    return arrayOfImages.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
         return `<div class="photo-card">
-                <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+                <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
                 <div class="info">
                     <p class="info-item">
                     <b>Likes: ${likes}</b>
@@ -73,6 +80,7 @@ function onLoadMore() {
                 alert("We're sorry, but you've reached the end of search results.")
             };
             galleryEl.insertAdjacentHTML("beforeend", createMarkup(res.hits));
+            lightbox.refresh();
         })
 }
 
