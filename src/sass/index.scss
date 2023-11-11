@@ -6,11 +6,15 @@
 
 
 .search-form {
-    margin: 40px;
+    padding: 10px 40px;
+    position: fixed;
+    background-color: #a19898;
+    width: 100vw;
 }
 
 
 .gallery {
+    padding-top: 60px;
 max-width: 1400px;
 display: flex;
 flex-wrap: wrap;
@@ -27,8 +31,13 @@ margin: auto;
 .image-item {
     width: 300px;
     height: 200px;
-
 }
+
+.image-item:hover {
+border: 2px dotted #a19898;
+}
+
+
 
 .info {
     font-size: 12px;
@@ -40,9 +49,6 @@ margin: auto;
 margin: 10px auto;
 }
 
-button {
-
-}
 
 .load-more {
     margin: 50px 40px;
