@@ -49,23 +49,23 @@ async function onSubmit(e) {
 function createMarkup(arrayOfImages) {
     return arrayOfImages.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
         return `<div class="photo-card">
-                <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" height="300px" loading="lazy" /></a>
+                <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" class="image-item" loading="lazy" /></a>
                 <div class="info">
                     <p class="info-item">
-                    <b>Likes: ${likes}</b>
+                    <b>&#x1F44D ${likes}</b>
                     </p>
                     <p class="info-item">
-                    <b>Views: ${views}</b>
+                    <b>&#x1F441 ${views}</b>
                     </p>
                     <p class="info-item">
-                    <b>Comments: ${comments}</b>
+                    <b>&#128172 ${comments}</b>
                     </p>
                     <p class="info-item">
-                    <b>Downloads: ${downloads}</b>
+                    <b>&#x2B07 ${downloads}</b>
                     </p>
                 </div>
                 </div>`
-    }).join();
+    }).join('');
 }
 
 function getSearchTerm() {
@@ -74,7 +74,7 @@ function getSearchTerm() {
 
 async function onLoadMore() {
     const queryTerm = getSearchTerm();
-    page += page;
+    page += 1;
     const res = await searchImages(queryTerm, page, PER_PAGE);
     if (maxPages === page) {
         hideEl(loadMoreEl);
@@ -92,7 +92,7 @@ function scrollToNext() {
 
     window.scrollBy({
         top: cardHeight * 2,
-        behavior: "smooth",
+        behavior: "smooth"
     });
 }
 
