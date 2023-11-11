@@ -12,6 +12,9 @@
     width: 100vw;
 }
 
+.search-form input {
+    outline: none;
+}
 
 .gallery {
     padding-top: 60px;
@@ -19,7 +22,6 @@ max-width: 1400px;
 display: flex;
 flex-wrap: wrap;
 gap: 20px;
-// justify-content: center;
 align-items: center;
 margin: auto;
 }
