@@ -1,7 +1,7 @@
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { searchImages } from "./pixabay-api";
+import { searchImages } from "./js/pixabay-api.js";
 
 const PER_PAGE = 40;
 const searchFormEl = document.querySelector('#search-form');
@@ -17,33 +17,38 @@ loadMoreEl.addEventListener('click', onLoadMore);
 let lightbox = new SimpleLightbox('.gallery > div > a', {});
 
 async function onSubmit(e) {
-    e.preventDefault();
-    page = 1;
-    galleryEl.innerHTML = '';
-    const queryTerm = getSearchTerm();
+    try {
+        e.preventDefault();
+        page = 1;
+        galleryEl.innerHTML = '';
+        const queryTerm = getSearchTerm();
 
-    if (!queryTerm) {
-        return;
-    }
+        if (!queryTerm) {
+            return;
+        }
 
-    hideEl(loadMoreEl);
-    const res = await searchImages(queryTerm, page, PER_PAGE);
-    maxPages = Math.ceil(res.totalHits / PER_PAGE);
-
-    if (res.hits.length) {
-        galleryEl.innerHTML = createMarkup(res.hits);
-        showEl(loadMoreEl);
-
-        lightbox.refresh();
-    }
-    else {
-        Notify.failure('Sorry, there are no images matching your search query. Please try again.')
-    }
-
-    if (maxPages === page) {
         hideEl(loadMoreEl);
-        Notify.warning("We're sorry, but you've reached the end of search results.")
+        const res = await searchImages(queryTerm, page, PER_PAGE);
+        maxPages = Math.ceil(res.totalHits / PER_PAGE);
+
+        if (res.hits.length) {
+            galleryEl.innerHTML = createMarkup(res.hits);
+            showEl(loadMoreEl);
+
+            lightbox.refresh();
+        }
+        else {
+            Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+        }
+
+        if (maxPages === page) {
+            hideEl(loadMoreEl);
+            Notify.warning("We're sorry, but you've reached the end of search results.")
+        }
+    } catch (error) {
+        Notify.failure('Sorry, something went wrong. Try again later.')
     }
+
 };
 
 function createMarkup(arrayOfImages) {
@@ -73,17 +78,22 @@ function getSearchTerm() {
 }
 
 async function onLoadMore() {
-    const queryTerm = getSearchTerm();
-    page += 1;
-    const res = await searchImages(queryTerm, page, PER_PAGE);
-    if (maxPages === page) {
-        hideEl(loadMoreEl);
-        Notify.info("We're sorry, but you've reached the end of search results.")
-    };
-    galleryEl.insertAdjacentHTML("beforeend", createMarkup(res.hits));
-    lightbox.refresh();
+    try {
+        const queryTerm = getSearchTerm();
+        page += 1;
+        const res = await searchImages(queryTerm, page, PER_PAGE);
+        if (maxPages === page) {
+            hideEl(loadMoreEl);
+            Notify.info("We're sorry, but you've reached the end of search results.")
+        };
+        galleryEl.insertAdjacentHTML("beforeend", createMarkup(res.hits));
+        lightbox.refresh();
 
-    scrollToNext();
+        scrollToNext();
+    } catch (error) {
+        Notify.failure('Sorry, something went wrong. Try again later.')
+    }
+
 }
 
 function scrollToNext() {
